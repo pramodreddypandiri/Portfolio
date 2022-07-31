@@ -5,50 +5,54 @@ body{
     font-family: 'Poppins';
     
     max-width: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
     /* background-position: center; */
+}
+a{
+    text-decoration: none;
+    color: aliceblue;
+}
+.header .logo h3{
+    color: aliceblue;
 }
 .header{
     width: 90%;
     margin: 1em auto;
-   
+    /* height: 70px; */
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
-    /* align-items: center; */
+    justify-content: space-between;
+    overflow: hidden;
+    background: transparent;
+    align-items: center;
      /* justify-content: center; */
 }
-.header .nav-bar{
-    width: 60%;
-    height: 70px;
-    position: relative;
-    left: 60%;
-    
+.header .menu-bar{
+    display: none;
 }
-.header ul{
+
+
+.nav-bar .nav-items{
     display: flex;
     flex-direction: row;
-    list-style-type: none;
     padding: 1em 1em;
-    
 }
-ul .nav-item{
-    padding: 0 1em;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: aliceblue;
-    margin: 0 0.5em;
+.nav-items .nav-item{
+    padding: 0em 1.5em;
+    font-size: 1.3rem;
 }
 ul .nav-item a{
     text-decoration: none;
     color: aliceblue;
 }
-ul .nav-item .active  {
-    color:rgb(0, 255, 34);
-}
 ul .nav-item a:hover{
     color: rgb(0, 255, 34);
 }
+ul .nav-item .active  {
+    color:rgb(0, 255, 34);
+}    
+
+
 
 .hero{
     width: 40%;
@@ -104,4 +108,45 @@ ul .nav-item a:hover{
 }
 .social img:hover{
     transform: scale(1.2);
+}
+.social-bottom{
+    display: none;
+    
+}
+@media screen and (max-width:700px){
+    .header .nav-items{
+        display: none;
+    }
+    .header .menu-bar{
+        display: block;
+        position: absolute;
+        top: 2em;
+        right: 2em;
+    }
+    .social{
+        display: none;
+    }
+    .social-bottom{
+        width: 90%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 0.5em;
+        margin-top: 2em;
+
+    }
+    .social-bottom img{
+        width: 60%;
+        cursor: pointer;
+        transition: transform 0.5s;
+    }
+    .social-bottom img:hover{
+        transform: scale(1.2);
+    }
+    .hero{
+        width: 80%;
+        position: relative;
+        left: 10%;
+        margin-top: 10%;
+    }
 }
