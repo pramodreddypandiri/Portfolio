@@ -3,6 +3,7 @@ body{
     background: url(/assets/nubelson-fernandes-Y376h7VN27c-unsplash.jpg);
     background-size: cover;
     font-family: 'Poppins';
+    background-repeat: no-repeat;
     
     max-width: 100%;
     overflow-x: hidden;
