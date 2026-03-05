@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pramod Reddy Pandiri — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #030712;
+      --bg2: #0a0f1e;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.08);
+      --border: rgba(139,92,246,0.18);
+      --purple: #8b5cf6;
+      --cyan: #22d3ee;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --gradient: linear-gradient(135deg, #8b5cf6, #22d3ee);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 2px; }
+    ::selection { background: rgba(139,92,246,0.3); color: #fff; }
+
+    /* ─── BACKGROUND ─────────────────────────────────── */
+    #bg-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0; opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .grid-overlay {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      z-index: 1; pointer-events: none;
+    }
+
+    .orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(90px); opacity: 0.12;
+      pointer-events: none; z-index: 2;
+    }
+    .orb-1 { width: 700px; height: 700px; background: #7c3aed; top: -200px; right: -150px; }
+    .orb-2 { width: 500px; height: 500px; background: #0e7490; bottom: 100px; left: -150px; }
+
+    /* ─── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.1rem 2rem;
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-weight: 800; font-size: 1rem; letter-spacing: -0.02em;
+      background: var(--gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted2); text-decoration: none;
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+    /* ─── LAYOUT ──────────────────────────────────────── */
+    section { position: relative; z-index: 10; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 2rem; }
+
+    /* ─── HERO ────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 7rem 0 5rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--cyan); font-size: 0.85rem; font-weight: 500;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+      opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 40px; height: 1px; background: var(--cyan);
+    }
+
+    .hero-name {
+      font-size: clamp(3rem, 8vw, 5.75rem);
+      font-weight: 900; line-height: 1.04; letter-spacing: -0.035em;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #f1f5f9 20%, #a78bfa 60%, #22d3ee 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+
+    .hero-role {
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      color: var(--muted2); font-weight: 400;
+      margin-bottom: 1.5rem; min-height: 2.5rem;
+      opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+    }
+    .hero-role .accent { color: var(--purple); font-weight: 600; }
+
+    .cursor {
+      display: inline-block; width: 2px; height: 1.1em;
+      background: var(--purple); margin-left: 2px;
+      animation: blink 0.7s step-end infinite;
+      vertical-align: middle;
+    }
+
+    .hero-desc {
+      color: var(--muted); font-size: 1rem; max-width: 520px;
+      line-height: 1.8; margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.7s 0.45s forwards;
+    }
+
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem;
+      opacity: 0; animation: fadeUp 0.7s 0.55s forwards;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem; border-radius: 10px;
+      font-weight: 600; font-size: 0.9rem;
+      text-decoration: none; cursor: pointer;
+      border: none; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--gradient); color: #fff; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139,92,246,0.45); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: var(--surface); border-color: var(--purple); transform: translateY(-2px); }
+
+    .hero-socials {
+      display: flex; gap: 0.75rem; align-items: center;
+      opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+    }
+
+    .social-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 10px;
+      border: 1px solid var(--border); color: var(--muted2);
+      text-decoration: none; transition: all 0.2s;
+    }
+    .social-btn:hover {
+      color: var(--text); border-color: var(--purple);
+      background: rgba(139,92,246,0.1); transform: translateY(-2px);
+    }
+
+    /* ─── SECTION COMMON ──────────────────────────────── */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; font-weight: 500; color: var(--cyan);
+      text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800; letter-spacing: -0.025em;
+    }
+    .section-title .g {
+      background: var(--gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-header { margin-bottom: 3.5rem; }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.2), transparent);
+    }
+
+    /* ─── ABOUT ───────────────────────────────────────── */
+    #about { padding: 6rem 0; }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+
+    .about-text p {
+      color: var(--muted2); font-size: 1rem; line-height: 1.85; margin-bottom: 1.25rem;
+    }
+
+    .about-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .about-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem;
+      transition: all 0.3s;
+    }
+    .about-card:hover {
+      border-color: var(--purple); background: var(--surface-hover);
+      transform: translateY(-3px); box-shadow: 0 10px 40px rgba(139,92,246,0.1);
+    }
+    .about-card .icon { font-size: 1.6rem; margin-bottom: 0.6rem; }
+    .about-card h4 { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .about-card p { font-size: 0.775rem; color: var(--muted); }
+
+    /* ─── PROJECTS ────────────────────────────────────── */
+    #projects { padding: 6rem 0; }
+
+    .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+    .project-card {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px; padding: 1.75rem;
+      position: relative; overflow: hidden;
+      transition: all 0.3s;
+      display: flex; flex-direction: column;
+    }
+    .project-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--card-top, var(--gradient));
+    }
+    .project-card:hover {
+      border-color: rgba(139,92,246,0.3);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 40px rgba(139,92,246,0.08);
+    }
+
+    .project-card.span2 { grid-column: span 2; }
+
+    .project-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 0.5rem;
+    }
+    .project-emoji { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+    .project-name { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; }
+
+    .project-links { display: flex; gap: 0.4rem; }
+    .proj-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--border); color: var(--muted2);
+      text-decoration: none; transition: all 0.2s;
+    }
+    .proj-link:hover {
+      color: var(--text); border-color: var(--purple);
+      background: rgba(139,92,246,0.1);
+    }
+
+    .project-desc {
+      color: var(--muted); font-size: 0.875rem; line-height: 1.65;
+      margin-bottom: 1.25rem; flex: 1;
+    }
+
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+      padding: 0.22rem 0.6rem; border-radius: 5px;
+      background: rgba(139,92,246,0.1); color: var(--purple);
+      border: 1px solid rgba(139,92,246,0.2);
+    }
+    .tag.c {
+      background: rgba(34,211,238,0.1); color: var(--cyan);
+      border-color: rgba(34,211,238,0.2);
+    }
+
+    .feat-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: 4px;
+      background: rgba(34,211,238,0.1); color: var(--cyan);
+      border: 1px solid rgba(34,211,238,0.2); margin-bottom: 0.6rem;
+    }
+
+    .feat-inner { display: flex; gap: 2rem; align-items: flex-start; }
+    .feat-content { flex: 1; }
+    .feat-visual {
+      width: 140px; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(34,211,238,0.08));
+      border: 1px solid rgba(139,92,246,0.2);
+      border-radius: 14px; padding: 1.25rem;
+      text-align: center; font-size: 3.5rem;
+    }
+
+    /* ─── SKILLS ──────────────────────────────────────── */
+    #skills { padding: 6rem 0; }
+
+    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+    .skill-cat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem; transition: all 0.2s;
+    }
+    .skill-cat:hover { border-color: rgba(139,92,246,0.35); }
+    .skill-cat h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; font-weight: 600; color: var(--cyan);
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1rem;
+    }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .badge {
+      font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 7px;
+      background: rgba(255,255,255,0.05); color: var(--muted2);
+      border: 1px solid rgba(255,255,255,0.08); font-weight: 500;
+      transition: all 0.2s;
+    }
+    .badge:hover {
+      background: rgba(139,92,246,0.1); color: var(--text);
+      border-color: rgba(139,92,246,0.3);
+    }
+
+    /* ─── CONTACT ─────────────────────────────────────── */
+    #contact { padding: 6rem 0; }
+
+    .contact-wrap {
+      max-width: 640px; margin: 0 auto;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; padding: 3.5rem;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .contact-wrap::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at top, rgba(139,92,246,0.1), transparent 65%);
+      pointer-events: none;
+    }
+    .contact-wrap h3 { font-size: 1.85rem; font-weight: 800; margin-bottom: 0.75rem; }
+    .contact-wrap p { color: var(--muted); font-size: 0.95rem; margin-bottom: 2.25rem; }
+
+    .contact-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.75rem; }
+    .c-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.25rem; border-radius: 10px;
+      border: 1px solid var(--border); color: var(--muted2);
+      text-decoration: none; font-size: 0.875rem; font-weight: 500;
+      transition: all 0.2s;
+    }
+    .c-link:hover {
+      color: var(--text); border-color: var(--purple);
+      background: rgba(139,92,246,0.1); transform: translateY(-2px);
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
+    footer {
+      padding: 2rem; text-align: center;
+      color: var(--muted); font-size: 0.8rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      position: relative; z-index: 10;
+    }
+
+    /* ─── ANIMATIONS ──────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.65s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; }
+    .d4 { transition-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .project-card.span2 { grid-column: span 2; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card.span2 { grid-column: span 1; }
+      .feat-inner { flex-direction: column; }
+      .feat-visual { width: 100%; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .about-cards { grid-template-columns: 1fr 1fr; }
+      .contact-wrap { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="grid-overlay"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ═══ NAV ════════════════════════════════════════════ -->
+<nav>
+  <span class="nav-logo">PRP</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Hello, world!</div>
+    <h1 class="hero-name">Pramod Reddy<br>Pandiri</h1>
+    <p class="hero-role">I build <span class="accent" id="typing"></span><span class="cursor"></span></p>
+    <p class="hero-desc">
+      Product-minded engineer who turns raw ideas into AI-powered software —
+      from mobile apps to real-time pipelines. I care about shipping things people actually use.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        View Projects
+      </a>
+      <a href="https://github.com/pramodreddypandiri" target="_blank" class="btn btn-outline">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 6.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+    <div class="hero-socials">
+      <a href="https://www.linkedin.com/in/pramodreddypandiri/" target="_blank" class="social-btn" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="https://x.com/pramodreddy1606" target="_blank" class="social-btn" title="Twitter / X">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/pramod_reddy_pandiri" target="_blank" class="social-btn" title="Instagram">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ ABOUT ═══════════════════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">01 / About</p>
+      <h2 class="section-title">Who I <span class="g">Am</span></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm a builder at heart — someone who gets excited about turning messy problems into clean, useful software. Whether it's a mobile app, a web platform, or a real-time AI pipeline, I care about shipping things that actually work.</p>
+        <p>My work spans AI-powered applications, cross-platform mobile development, and full-stack web engineering. I'm particularly drawn to projects at the intersection of AI and everyday utility — tools that make life a little bit smarter.</p>
+        <p>When I'm not coding, you'll find me following Formula 1. That passion has found its way into a couple of projects too.</p>
+      </div>
+      <div class="about-cards reveal d1">
+        <div class="about-card">
+          <div class="icon">🤖</div>
+          <h4>AI-First Builder</h4>
+          <p>LLMs, STT, TTS and multi-modal AI pipelines</p>
+        </div>
+        <div class="about-card">
+          <div class="icon">📱</div>
+          <h4>Mobile Dev</h4>
+          <p>React Native & Expo for cross-platform apps</p>
+        </div>
+        <div class="about-card">
+          <div class="icon">⚡</div>
+          <h4>Real-time Systems</h4>
+          <p>WebSockets, streaming pipelines, live data</p>
+        </div>
+        <div class="about-card">
+          <div class="icon">🏎️</div>
+          <h4>F1 Fanatic</h4>
+          <p>Passion turned into data viz and AI commentary</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ PROJECTS ══════════════════════════════════════════ -->
+<section id="projects">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">02 / Work</p>
+      <h2 class="section-title">Featured <span class="g">Projects</span></h2>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- notto — Featured (spans 2 cols) -->
+      <div class="project-card span2 reveal" style="--card-top: linear-gradient(90deg,#6366f1,#8b5cf6,#a78bfa);">
+        <div class="feat-badge">⭐ Featured</div>
+        <div class="feat-inner">
+          <div class="feat-content">
+            <div class="project-header">
+              <h3 class="project-name">notto</h3>
+              <div class="project-links">
+                <a href="https://github.com/pramodreddypandiri/notto" target="_blank" class="proj-link" title="GitHub">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 6.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                </a>
+              </div>
+            </div>
+            <p class="project-desc" style="max-width:520px;">
+              Voice-first life assistant that transforms scattered voice notes, cravings, and to-dos into smart reminders and AI-powered weekend plans. Speak naturally — the app handles geofencing, recurring reminders, and personality-driven recommendations automatically.
+            </p>
+            <div class="project-tags">
+              <span class="tag">React Native</span>
+              <span class="tag">Expo</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">Supabase</span>
+              <span class="tag c">DeepSeek AI</span>
+              <span class="tag c">OpenAI Whisper</span>
+              <span class="tag">Google Places</span>
+              <span class="tag">Geofencing</span>
+              <span class="tag">NativeWind</span>
+            </div>
+          </div>
+          <div class="feat-visual">🎙️</div>
+        </div>
+      </div>
+
+      <!-- LearnPulse -->
+      <div class="project-card reveal d1" style="--card-top: linear-gradient(90deg,#0ea5e9,#22d3ee);">
+        <span class="project-emoji">🧠</span>
+        <div class="project-header">
+          <h3 class="project-name">LearnPulse</h3>
+          <div class="project-links">
+            <a href="https://github.com/pramodreddypandiri/LearnPulse" target="_blank" class="proj-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 6.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <p class="project-desc">AI agent that reads your daily browsing and search history, classifies learning moments, and auto-generates authentic LinkedIn posts and tweets — zero clichés, all genuine insight.</p>
+        <div class="project-tags">
+          <span class="tag">Next.js 14</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Tailwind CSS</span>
+          <span class="tag c">DeepSeek API</span>
+          <span class="tag">Chrome Extension MV3</span>
+          <span class="tag">Zod</span>
+        </div>
+      </div>
+
+      <!-- F1 Telugu -->
+      <div class="project-card reveal d2" style="--card-top: linear-gradient(90deg,#ef4444,#f97316);">
+        <span class="project-emoji">🏎️</span>
+        <div class="project-header">
+          <h3 class="project-name">F1 Telugu</h3>
+          <div class="project-links">
+            <a href="https://github.com/pramodreddypandiri/F1Telugu" target="_blank" class="proj-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 6.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <p class="project-desc">Real-time AI pipeline that captures live F1 English commentary, translates to Telugu via LLMs, and streams energetic audio to unlimited concurrent listeners — all within 3–5 seconds of broadcast.</p>
+        <div class="project-tags">
+          <span class="tag">FastAPI</span>
+          <span class="tag">Python</span>
+          <span class="tag c">Deepgram STT</span>
+          <span class="tag c">Sarvam AI</span>
+          <span class="tag">Socket.io</span>
+          <span class="tag">Redis</span>
+          <span class="tag">Next.js</span>
+        </div>
+      </div>
+
+      <!-- ClipQueue -->
+      <div class="project-card reveal d1" style="--card-top: linear-gradient(90deg,#10b981,#06b6d4);">
+        <span class="project-emoji">📋</span>
+        <div class="project-header">
+          <h3 class="project-name">ClipQueue</h3>
+          <div class="project-links">
+            <a href="https://github.com/pramodreddypandiri/ClipQueue" target="_blank" class="proj-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 6.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <p class="project-desc">macOS menu-bar utility with a FIFO clipboard queue. Copy multiple items on one screen, paste them in order on another — no more constant switching between windows.</p>
+        <div class="project-tags">
+          <span class="tag">Electron</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">macOS</span>
+          <span class="tag">JavaScript</span>
+        </div>
+      </div>
+
+      <!-- F1 Race Replay -->
+      <div class="project-card reveal d2" style="--card-top: linear-gradient(90deg,#f59e0b,#ef4444);">
+        <span class="project-emoji">🏁</span>
+        <div class="project-header">
+          <h3 class="project-name">F1 Race Replay</h3>
+          <div class="project-links">
+            <a href="https://github.com/pramodreddypandiri/f1-race-replay" target="_blank" class="proj-link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 6.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+        <p class="project-desc">Interactive F1 race visualizer with animated driver positions on rendered tracks, a live leaderboard, full telemetry (speed, DRS, gear), and adjustable playback controls from 0.5× to 4×.</p>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag c">FastF1</span>
+          <span class="tag">Arcade</span>
+          <span class="tag">NumPy</span>
+          <span class="tag">Data Viz</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ SKILLS ════════════════════════════════════════════ -->
+<section id="skills">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">03 / Stack</p>
+      <h2 class="section-title">Tech <span class="g">Stack</span></h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-cat reveal">
+        <h3>Languages</h3>
+        <div class="badges">
+          <span class="badge">TypeScript</span>
+          <span class="badge">Python</span>
+          <span class="badge">JavaScript</span>
+          <span class="badge">HTML / CSS</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal d1">
+        <h3>Frontend &amp; Mobile</h3>
+        <div class="badges">
+          <span class="badge">Next.js</span>
+          <span class="badge">React</span>
+          <span class="badge">React Native</span>
+          <span class="badge">Expo</span>
+          <span class="badge">Tailwind CSS</span>
+          <span class="badge">Electron</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal d2">
+        <h3>Backend &amp; Infra</h3>
+        <div class="badges">
+          <span class="badge">FastAPI</span>
+          <span class="badge">Node.js</span>
+          <span class="badge">Supabase</span>
+          <span class="badge">PostgreSQL</span>
+          <span class="badge">Redis</span>
+          <span class="badge">Socket.io</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal d3">
+        <h3>AI / ML</h3>
+        <div class="badges">
+          <span class="badge">DeepSeek AI</span>
+          <span class="badge">OpenAI Whisper</span>
+          <span class="badge">Sarvam AI</span>
+          <span class="badge">Deepgram STT</span>
+          <span class="badge">Groq</span>
+          <span class="badge">LLM Pipelines</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal d1">
+        <h3>Tools &amp; Platform</h3>
+        <div class="badges">
+          <span class="badge">Chrome Extensions</span>
+          <span class="badge">EAS Build</span>
+          <span class="badge">Git</span>
+          <span class="badge">yt-dlp</span>
+          <span class="badge">ffmpeg</span>
+          <span class="badge">OpenF1 API</span>
+        </div>
+      </div>
+      <div class="skill-cat reveal d2">
+        <h3>Architecture</h3>
+        <div class="badges">
+          <span class="badge">Real-time Streaming</span>
+          <span class="badge">AI Pipelines</span>
+          <span class="badge">Geofencing</span>
+          <span class="badge">WebSockets</span>
+          <span class="badge">REST APIs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ CONTACT ═══════════════════════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="section-header reveal" style="text-align:center;">
+      <p class="section-label">04 / Contact</p>
+      <h2 class="section-title">Let's <span class="g">Connect</span></h2>
+    </div>
+    <div class="contact-wrap reveal d1">
+      <h3>Open to opportunities</h3>
+      <p>Whether you want to collaborate on a project, discuss ideas, or just say hello — I'd love to hear from you.</p>
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/pramodreddypandiri/" target="_blank" class="c-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/pramodreddypandiri" target="_blank" class="c-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 6.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.562 21.8 24 17.302 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="https://x.com/pramodreddy1606" target="_blank" class="c-link">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Twitter / X
+        </a>
+        <a href="https://www.instagram.com/pramod_reddy_pandiri" target="_blank" class="c-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Designed &amp; built by Pramod Reddy Pandiri &nbsp;·&nbsp; 2025</p>
+</footer>
+
+<script>
+/* ── CANVAS PARTICLE NETWORK ────────────────────────── */
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(true); }
+  reset(init) {
+    this.x = init ? Math.random() * W : (Math.random() > 0.5 ? 0 : W);
+    this.y = init ? Math.random() * H : Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.35;
+    this.vy = (Math.random() - 0.5) * 0.35;
+    this.r  = Math.random() * 1.4 + 0.4;
+    this.a  = Math.random() * 0.55 + 0.1;
+    this.col = Math.random() > 0.5 ? '139,92,246' : '34,211,238';
+  }
+  step() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < -10 || this.x > W + 10 || this.y < -10 || this.y > H + 10) this.reset(false);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${this.col},${this.a})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 90; i++) particles.push(new Particle());
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d  = Math.sqrt(dx * dx + dy * dy);
+      if (d < 130) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(139,92,246,${0.09 * (1 - d / 130)})`;
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+    particles[i].step();
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* ── TYPING ANIMATION ───────────────────────────────── */
+const words = ['AI-powered apps', 'real-time pipelines', 'mobile experiences', 'things people love'];
+let wi = 0, ci = 0, del = false;
+const el = document.getElementById('typing');
+
+function type() {
+  const w = words[wi];
+  if (!del) {
+    el.textContent = w.slice(0, ++ci);
+    if (ci === w.length) { del = true; return setTimeout(type, 2200); }
+  } else {
+    el.textContent = w.slice(0, --ci);
+    if (ci === 0) { del = false; wi = (wi + 1) % words.length; }
+  }
+  setTimeout(type, del ? 45 : 75);
+}
+type();
+
+/* ── SCROLL REVEAL ──────────────────────────────────── */
+const io = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+  { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+);
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ── ACTIVE NAV LINK ────────────────────────────────── */
+const sections = document.querySelectorAll('section[id]');
+const links    = document.querySelectorAll('.nav-links a');
+const nio = new IntersectionObserver(
+  entries => entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+    }
+  }),
+  { threshold: 0.45 }
+);
+sections.forEach(s => nio.observe(s));
+</script>
+</body>
+</html>
